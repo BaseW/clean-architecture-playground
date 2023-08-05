@@ -1,3 +1,17 @@
 # clean-architecture-playground
 
-実際にクリーンアーキテクチャーで実装して勉強してみる
+クリーンアーキテクチャーに法って TODO アプリを作成したい
+
+## セットアップ
+
+#### 前提
+
+- sqlx-cli
+- direnv
+
+#### データベース
+
+```bash
+$ sqlx database create
+$ sqlx migrate run
+```
