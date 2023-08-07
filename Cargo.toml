@@ -1,5 +1,5 @@
 [workspace]
-members = ["domain", "usecase"]
+members = ["domain", "use_case"]
 # Only check / build main crates by default (check all with `--workspace`)
 default-members = ["domain"]
 # Example has been deleted, but README.md remains

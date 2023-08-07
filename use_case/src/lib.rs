@@ -1,3 +1,8 @@
+pub mod dto;
+pub mod error;
+pub mod interactor;
+pub mod traits;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
