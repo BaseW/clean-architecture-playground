@@ -1,7 +1,7 @@
 [workspace]
-members = ["domain", "use_case"]
+members = ["domain", "use_case", "infrastructure"]
 # Only check / build main crates by default (check all with `--workspace`)
-default-members = ["domain"]
+default-members = ["domain", "use_case", "infrastructure"]
 # Example has been deleted, but README.md remains
 exclude = []
 resolver = "2"
