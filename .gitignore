@@ -6,3 +6,6 @@ db/
 
 # env
 .envrc
+
+# sqlx
+.sqlx/
