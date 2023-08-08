@@ -33,6 +33,16 @@ impl TodoRepository for SqliteTodoRepository {
         };
         InternalSqliteTodoRepository::find_all(&mut conn).await
     }
+
+    async fn delete(&self, todo_id: i32) -> Result<(), DomainError> {
+        let tx = self.pool.begin().await;
+        let mut tx = match tx {
+            Ok(tx) => tx,
+            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+        };
+        InternalSqliteTodoRepository::delete(todo_id, &mut tx).await?;
+        Ok(())
+    }
 }
 
 pub struct InternalSqliteTodoRepository {}
@@ -68,6 +78,22 @@ impl InternalSqliteTodoRepository {
         .await;
         match todos {
             Ok(todos) => Ok(todos),
+            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+        }
+    }
+
+    pub async fn delete(todo_id: i32, conn: &mut SqliteConnection) -> Result<(), DomainError> {
+        let todo = sqlx::query(
+            r#"
+            DELETE FROM todos
+            WHERE id = $1
+            "#,
+        )
+        .bind(todo_id)
+        .execute(&mut *conn)
+        .await;
+        match todo {
+            Ok(_) => Ok(()),
             Err(e) => return Err(DomainError::Infrastructure(e.into())),
         }
     }
