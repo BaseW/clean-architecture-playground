@@ -4,21 +4,21 @@ use domain::{entity::todo::Todo, repository::todo_repository::TodoRepository};
 use crate::{
     dto::todo::{CreateTodoDto, TodoDto},
     error::UseCaseError,
-    traits::todo::{CreateTodoUseCase, QueryTodoUseCase},
+    traits::todo::{MutationTodoUseCase, QueryTodoUseCase},
 };
 
-pub struct CreateTodoInteractor<TR> {
+pub struct MutationTodoInteractor<TR> {
     todo_repository: TR,
 }
 
-impl<TR> CreateTodoInteractor<TR> {
+impl<TR> MutationTodoInteractor<TR> {
     pub fn new(todo_repository: TR) -> Self {
         Self { todo_repository }
     }
 }
 
 #[async_trait]
-impl<TR> CreateTodoUseCase for CreateTodoInteractor<TR>
+impl<TR> MutationTodoUseCase for MutationTodoInteractor<TR>
 where
     TR: TodoRepository,
 {
@@ -26,6 +26,11 @@ where
         let todo = Todo::try_from(todo_data)?;
         self.todo_repository.create(&todo).await?;
         Ok(todo.into())
+    }
+
+    async fn delete(&self, todo_id: i32) -> Result<i32, UseCaseError> {
+        self.todo_repository.delete(todo_id).await?;
+        Ok(todo_id)
     }
 }
 
