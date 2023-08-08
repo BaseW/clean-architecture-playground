@@ -4,8 +4,8 @@ use crate::error::UseCaseError;
 
 #[derive(Debug, Clone)]
 pub struct TodoDto {
-    pub id: i32,
-    pub title: String,
+    pub id: i64,
+    pub title: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -28,7 +28,7 @@ impl TryFrom<CreateTodoDto> for Todo {
     fn try_from(todo_data: CreateTodoDto) -> Result<Self, Self::Error> {
         Ok(Self {
             id: 0,
-            title: todo_data.title,
+            title: Some(todo_data.title),
         })
     }
 }
