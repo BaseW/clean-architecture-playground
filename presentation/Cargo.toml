@@ -1,5 +1,5 @@
 [package]
-name = "server"
+name = "presentation"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,9 @@ edition = "2021"
 
 [dependencies]
 async-graphql = "6.0.1"
+async-graphql-axum = "6.0.1"
 axum = "0.6.20"
+domain = { version = "0.1.0", path = "../domain" }
 hyper = "0.14.27"
 tokio = { version = "1.29.1", features = ["full"] }
+use_case = { version = "0.1.0", path = "../use_case" }

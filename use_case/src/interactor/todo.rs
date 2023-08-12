@@ -4,7 +4,7 @@ use domain::{entity::todo::Todo, repository::todo_repository::TodoRepository};
 use crate::{
     dto::todo::{CreateTodoDto, TodoDto},
     error::UseCaseError,
-    traits::todo::{MutationTodoUseCase, QueryTodoUseCase},
+    traits::todo::{MutationUseCase, QueryUseCase},
 };
 
 pub struct MutationTodoInteractor<TR> {
@@ -18,7 +18,7 @@ impl<TR> MutationTodoInteractor<TR> {
 }
 
 #[async_trait]
-impl<TR> MutationTodoUseCase for MutationTodoInteractor<TR>
+impl<TR> MutationUseCase for MutationTodoInteractor<TR>
 where
     TR: TodoRepository,
 {
@@ -28,7 +28,7 @@ where
         Ok(todo.into())
     }
 
-    async fn delete(&self, todo_id: i32) -> Result<i32, UseCaseError> {
+    async fn delete(&self, todo_id: i64) -> Result<i64, UseCaseError> {
         self.todo_repository.delete(todo_id).await?;
         Ok(todo_id)
     }
@@ -45,14 +45,17 @@ impl<TR> QueryInteractor<TR> {
 }
 
 #[async_trait]
-impl<TR> QueryTodoUseCase for QueryInteractor<TR>
+impl<TR> QueryUseCase for QueryInteractor<TR>
 where
     TR: TodoRepository,
 {
-    async fn find_all(&self) -> Result<Vec<Todo>, UseCaseError> {
+    async fn find_all(&self) -> Result<Vec<TodoDto>, UseCaseError> {
         let result = self.todo_repository.find_all().await;
         match result {
-            Ok(todos) => Ok(todos),
+            Ok(todos) => {
+                let todo_dtos = todos.into_iter().map(|todo| todo.into()).collect();
+                Ok(todo_dtos)
+            }
             Err(e) => Err(UseCaseError::from(e)),
         }
     }
