@@ -34,6 +34,7 @@ where
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct QueryInteractor<TR> {
     todo_repository: TR,
 }

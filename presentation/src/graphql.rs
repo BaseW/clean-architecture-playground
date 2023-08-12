@@ -1,5 +1,5 @@
 use crate::{error::PresentationalError, object::Todo};
-use async_graphql::{Context, Object};
+use async_graphql::{Context, EmptySubscription, Object, Schema};
 use use_case::{
     dto::todo::CreateTodoDto,
     traits::todo::{MutationUseCase, QueryUseCase},
@@ -71,4 +71,15 @@ where
         self.mutation_use_case.delete(id).await?;
         Ok(id)
     }
+}
+
+pub fn build_schema<QUC, MUC>(
+    query: Query<QUC>,
+    mutation: Mutation<MUC>,
+) -> Schema<Query<QUC>, Mutation<MUC>, EmptySubscription>
+where
+    QUC: QueryUseCase,
+    MUC: MutationUseCase,
+{
+    Schema::build(query, mutation, EmptySubscription).finish()
 }

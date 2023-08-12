@@ -1,7 +1,19 @@
 [workspace]
-members = ["domain", "use_case", "infrastructure", "presentation"]
+members = [
+  "domain",
+  "use_case",
+  "infrastructure",
+  "presentation",
+  "graphql-server",
+]
 # Only check / build main crates by default (check all with `--workspace`)
-default-members = ["domain", "use_case", "infrastructure", "presentation"]
+default-members = [
+  "domain",
+  "use_case",
+  "infrastructure",
+  "presentation",
+  "graphql-server",
+]
 # Example has been deleted, but README.md remains
 exclude = []
 resolver = "2"

@@ -1,0 +1,17 @@
+[package]
+name = "graphql-server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.72"
+async-graphql = "6.0.1"
+axum = "0.6.20"
+infrastructure = { version = "0.1.0", path = "../infrastructure" }
+presentation = { version = "0.1.0", path = "../presentation" }
+sqlx = { version = "0.7.1", features = ["sqlite", "runtime-tokio"] }
+tokio = { version = "1.30.0", features = ["full"] }
+tower = "0.4.13"
+use_case = { version = "0.1.0", path = "../use_case" }
