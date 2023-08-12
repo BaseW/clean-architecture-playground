@@ -34,7 +34,7 @@ impl TodoRepository for SqliteTodoRepository {
         InternalSqliteTodoRepository::find_all(&mut conn).await
     }
 
-    async fn delete(&self, todo_id: i32) -> Result<(), DomainError> {
+    async fn delete(&self, todo_id: i64) -> Result<(), DomainError> {
         let tx = self.pool.begin().await;
         let mut tx = match tx {
             Ok(tx) => tx,
@@ -82,7 +82,7 @@ impl InternalSqliteTodoRepository {
         }
     }
 
-    pub async fn delete(todo_id: i32, conn: &mut SqliteConnection) -> Result<(), DomainError> {
+    pub async fn delete(todo_id: i64, conn: &mut SqliteConnection) -> Result<(), DomainError> {
         let todo = sqlx::query(
             r#"
             DELETE FROM todos

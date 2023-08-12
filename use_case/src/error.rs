@@ -2,7 +2,7 @@ use domain::error::DomainError;
 
 pub enum UseCaseError {
     Validation(String),
-    NotFound { entity_type: String, entity_id: i32 },
+    NotFound { entity_type: String, entity_id: i64 },
     Other(anyhow::Error),
     Unexpected(String),
 }
