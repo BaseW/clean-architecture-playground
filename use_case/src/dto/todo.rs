@@ -22,6 +22,17 @@ impl From<Todo> for TodoDto {
     }
 }
 
+impl TryFrom<TodoDto> for Todo {
+    type Error = UseCaseError;
+
+    fn try_from(todo_data: TodoDto) -> Result<Self, Self::Error> {
+        Ok(Self {
+            id: todo_data.id,
+            title: todo_data.title,
+        })
+    }
+}
+
 impl TryFrom<CreateTodoDto> for Todo {
     type Error = UseCaseError;
 

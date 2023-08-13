@@ -28,6 +28,12 @@ where
         Ok(todo.into())
     }
 
+    async fn update(&self, todo_data: TodoDto) -> Result<TodoDto, UseCaseError> {
+        let todo = Todo::try_from(todo_data)?;
+        self.todo_repository.update(&todo).await?;
+        Ok(todo.into())
+    }
+
     async fn delete(&self, todo_id: i64) -> Result<i64, UseCaseError> {
         self.todo_repository.delete(todo_id).await?;
         Ok(todo_id)
@@ -86,7 +92,7 @@ mod tests {
 
     #[async_trait]
     impl TodoRepository for MockTodoRepository {
-        async fn create(&self, todo: &Todo) -> Result<(), domain::error::DomainError> {
+        async fn create(&self, new_todo: &Todo) -> Result<(), domain::error::DomainError> {
             let original_todos = self.todos.clone();
             let mut todos = original_todos.lock().unwrap();
             let length = todos.len();
@@ -97,7 +103,7 @@ mod tests {
             }
             new_todos.push(Todo {
                 id: new_id,
-                title: todo.title.clone(),
+                title: new_todo.title.clone(),
             });
             *todos = new_todos;
             Ok(())
@@ -107,6 +113,22 @@ mod tests {
             let todos = self.todos.clone();
             let todos = todos.lock().unwrap();
             Ok(todos.clone())
+        }
+
+        async fn update(&self, new_todo: &Todo) -> Result<(), domain::error::DomainError> {
+            let original_todos = self.todos.clone();
+            let mut todos = original_todos.lock().unwrap();
+            let mut new_todos = Vec::new();
+            for todo in todos.iter() {
+                if todo.id == todo.id {
+                    new_todos.push(Todo {
+                        id: todo.id,
+                        title: new_todo.title.clone(),
+                    });
+                }
+            }
+            *todos = new_todos;
+            Ok(())
         }
 
         async fn delete(&self, todo_id: i64) -> Result<(), domain::error::DomainError> {
