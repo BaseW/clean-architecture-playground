@@ -61,3 +61,125 @@ where
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use async_trait::async_trait;
+    use std::sync::{Arc, Mutex};
+
+    #[derive(Debug, Clone)]
+    pub struct MockTodoRepository {
+        todos: Arc<Mutex<Vec<Todo>>>,
+    }
+
+    impl MockTodoRepository {
+        pub fn new() -> Self {
+            let todos = vec![Todo {
+                id: 1,
+                title: Some("task1".to_string()),
+            }];
+            let todos = Arc::new(Mutex::new(todos));
+            Self { todos }
+        }
+    }
+
+    #[async_trait]
+    impl TodoRepository for MockTodoRepository {
+        async fn create(&self, todo: &Todo) -> Result<(), domain::error::DomainError> {
+            let original_todos = self.todos.clone();
+            let mut todos = original_todos.lock().unwrap();
+            let length = todos.len();
+            let new_id = length as i64 + 1;
+            let mut new_todos = Vec::new();
+            for todo in todos.iter() {
+                new_todos.push(todo.clone());
+            }
+            new_todos.push(Todo {
+                id: new_id,
+                title: todo.title.clone(),
+            });
+            *todos = new_todos;
+            Ok(())
+        }
+
+        async fn find_all(&self) -> Result<Vec<Todo>, domain::error::DomainError> {
+            let todos = self.todos.clone();
+            let todos = todos.lock().unwrap();
+            Ok(todos.clone())
+        }
+
+        async fn delete(&self, todo_id: i64) -> Result<(), domain::error::DomainError> {
+            let original_todos = self.todos.clone();
+            let mut todos = original_todos.lock().unwrap();
+            let mut new_todos = Vec::new();
+            for todo in todos.iter() {
+                if todo.id != todo_id {
+                    new_todos.push(todo.clone());
+                }
+            }
+            *todos = new_todos;
+            Ok(())
+        }
+    }
+
+    #[tokio::test]
+    async fn test_create() {
+        let todo_repository = MockTodoRepository::new();
+        let mutation_interactor = MutationTodoInteractor::new(todo_repository.clone());
+        let todo_data = CreateTodoDto {
+            title: "task2".to_string(),
+        };
+        let result = mutation_interactor.create(todo_data).await;
+        assert!(result.is_ok());
+
+        let query_interactor = QueryInteractor::new(todo_repository);
+        let result = query_interactor.find_all().await;
+        match result {
+            Ok(todos) => {
+                assert_eq!(todos.len(), 2);
+                assert_eq!(todos[0].id, 1);
+                assert_eq!(todos[0].title, Some("task1".to_string()));
+                assert_eq!(todos[1].id, 2);
+                assert_eq!(todos[1].title, Some("task2".to_string()));
+            }
+            Err(_) => {
+                assert!(false)
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_delete() {
+        let todo_repository = MockTodoRepository::new();
+        let mutation_interactor = MutationTodoInteractor::new(todo_repository.clone());
+        let result = mutation_interactor.delete(1).await;
+        assert!(result.is_ok());
+
+        let query_interactor = QueryInteractor::new(todo_repository);
+        let result = query_interactor.find_all().await;
+        match result {
+            Ok(todos) => {
+                assert_eq!(todos.len(), 0);
+            }
+            Err(_) => {
+                assert!(false)
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_find_all() {
+        let todo_repository = MockTodoRepository::new();
+        let query_interactor = QueryInteractor::new(todo_repository);
+        let result = query_interactor.find_all().await;
+        match result {
+            Ok(todos) => {
+                assert_eq!(todos.len(), 1);
+                assert_eq!(todos[0].id, 1);
+                assert_eq!(todos[0].title, Some("task1".to_string()));
+            }
+            Err(_) => assert!(false),
+        }
+    }
+}
