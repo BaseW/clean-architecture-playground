@@ -15,4 +15,5 @@ pub trait MutationUseCase: Send + Sync + 'static {
 #[async_trait]
 pub trait QueryUseCase: Send + Sync + 'static {
     async fn find_all(&self) -> Result<Vec<TodoDto>, UseCaseError>;
+    async fn find_by_id(&self, todo_id: i64) -> Result<Option<TodoDto>, UseCaseError>;
 }

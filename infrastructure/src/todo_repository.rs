@@ -34,6 +34,15 @@ impl TodoRepository for SqliteTodoRepository {
         InternalSqliteTodoRepository::find_all(&mut conn).await
     }
 
+    async fn find_by_id(&self, id: i64) -> Result<Option<Todo>, DomainError> {
+        let conn = self.pool.acquire().await;
+        let mut conn = match conn {
+            Ok(conn) => conn,
+            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+        };
+        InternalSqliteTodoRepository::find_by_id(id, &mut conn).await
+    }
+
     async fn update(&self, todo: &Todo) -> Result<(), DomainError> {
         let tx = self.pool.begin().await;
         let mut tx = match tx {
@@ -88,6 +97,27 @@ impl InternalSqliteTodoRepository {
         .await;
         match todos {
             Ok(todos) => Ok(todos),
+            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+        }
+    }
+
+    pub async fn find_by_id(
+        id: i64,
+        conn: &mut SqliteConnection,
+    ) -> Result<Option<Todo>, DomainError> {
+        let todo = sqlx::query_as!(
+            Todo,
+            r#"
+            SELECT id, title
+            FROM todos
+            WHERE id = $1
+            "#,
+            id
+        )
+        .fetch_optional(&mut *conn)
+        .await;
+        match todo {
+            Ok(todo) => Ok(todo),
             Err(e) => return Err(DomainError::Infrastructure(e.into())),
         }
     }

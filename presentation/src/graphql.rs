@@ -1,7 +1,7 @@
 use crate::{error::PresentationalError, object::Todo};
 use async_graphql::{Context, EmptySubscription, Object, Schema};
 use use_case::{
-    dto::todo::CreateTodoDto,
+    dto::todo::{CreateTodoDto, TodoDto},
     traits::todo::{MutationUseCase, QueryUseCase},
 };
 
@@ -31,6 +31,18 @@ where
             .collect();
         Ok(todo_objects)
     }
+
+    async fn todo(
+        &self,
+        _context: &Context<'_>,
+        id: i64,
+    ) -> Result<Option<Todo>, PresentationalError> {
+        let todo = self.query_use_case.find_by_id(id).await?;
+        match todo {
+            Some(todo) => Ok(Some(Todo::new(todo.id, todo.title))),
+            None => Ok(None),
+        }
+    }
 }
 
 pub struct Mutation<MUC> {
@@ -59,6 +71,22 @@ where
         let todo = self
             .mutation_use_case
             .create(CreateTodoDto { title })
+            .await?;
+        Ok(Todo::new(todo.id, todo.title))
+    }
+
+    async fn update_todo(
+        &self,
+        _context: &Context<'_>,
+        id: i64,
+        title: String,
+    ) -> Result<Todo, PresentationalError> {
+        let todo = self
+            .mutation_use_case
+            .update(TodoDto {
+                id,
+                title: Some(title),
+            })
             .await?;
         Ok(Todo::new(todo.id, todo.title))
     }
