@@ -7,19 +7,18 @@ use crate::{
     traits::todo::{MutationUseCase, QueryUseCase},
 };
 
-pub struct MutationTodoInteractor<TR> {
+pub struct MutationInteractor<TR> {
     todo_repository: TR,
 }
 
-impl<TR> MutationTodoInteractor<TR> {
+impl<TR> MutationInteractor<TR> {
     pub fn new(todo_repository: TR) -> Self {
         Self { todo_repository }
     }
 }
 
 #[async_trait]
-impl<TR> MutationUseCase for MutationTodoInteractor<TR>
-// TODO: MutationInteractor に直す
+impl<TR> MutationUseCase for MutationInteractor<TR>
 where
     TR: TodoRepository,
 {
@@ -174,7 +173,7 @@ mod tests {
     #[tokio::test]
     async fn test_create() {
         let todo_repository = MockTodoRepository::new();
-        let mutation_interactor = MutationTodoInteractor::new(todo_repository.clone());
+        let mutation_interactor = MutationInteractor::new(todo_repository.clone());
         let todo_data = CreateTodoDto {
             title: "task2".to_string(),
         };
@@ -200,7 +199,7 @@ mod tests {
     #[tokio::test]
     async fn test_delete() {
         let todo_repository = MockTodoRepository::new();
-        let mutation_interactor = MutationTodoInteractor::new(todo_repository.clone());
+        let mutation_interactor = MutationInteractor::new(todo_repository.clone());
         let result = mutation_interactor.delete(1).await;
         assert!(result.is_ok());
 
