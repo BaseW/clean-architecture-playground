@@ -7,9 +7,9 @@
 #
 # To enable this hook, rename this file to "pre-commit".
 
-target=`git diff --staged --name-only | grep -e .rs`
+target=`git diff --staged --name-only | grep -e .rs | wc -l`
 # check if target exist
-if [ "$target" -neq "" ]; then
+if [ "$target" -ne "0" ]; then
     echo "Running rustfmt..."
     cargo fmt
     git add .
