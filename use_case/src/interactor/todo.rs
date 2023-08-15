@@ -66,6 +66,17 @@ where
             Err(e) => Err(UseCaseError::from(e)),
         }
     }
+
+    async fn find_by_id(&self, todo_id: i64) -> Result<Option<TodoDto>, UseCaseError> {
+        let result = self.todo_repository.find_by_id(todo_id).await;
+        match result {
+            Ok(todo) => match todo {
+                Some(todo) => Ok(Some(todo.into())),
+                None => Ok(None),
+            },
+            Err(e) => Err(UseCaseError::from(e)),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -113,6 +124,20 @@ mod tests {
             let todos = self.todos.clone();
             let todos = todos.lock().unwrap();
             Ok(todos.clone())
+        }
+
+        async fn find_by_id(
+            &self,
+            todo_id: i64,
+        ) -> Result<Option<Todo>, domain::error::DomainError> {
+            let todos = self.todos.clone();
+            let todos = todos.lock().unwrap();
+            for todo in todos.iter() {
+                if todo.id == todo_id {
+                    return Ok(Some(todo.clone()));
+                }
+            }
+            Ok(None)
         }
 
         async fn update(&self, new_todo: &Todo) -> Result<(), domain::error::DomainError> {
