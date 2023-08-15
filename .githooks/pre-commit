@@ -9,7 +9,7 @@
 
 target=`git diff --staged --name-only | grep -e .rs`
 # check if target exist
-if test -n $target; then
+if [ "$target" -neq "" ]; then
     echo "Running rustfmt..."
     cargo fmt
     git add .
