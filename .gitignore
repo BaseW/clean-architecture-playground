@@ -7,9 +7,6 @@ db/
 # env
 .envrc
 
-# sqlx
-.sqlx/
-
 # git hooks
 .githooks/*
 !/.githooks/pre-commit
