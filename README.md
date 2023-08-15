@@ -1,5 +1,7 @@
 # clean-architecture-playground
 
+[![CI](https://github.com/BaseW/clean-architecture-playground/actions/workflows/ci.yml/badge.svg?event=pull_request)](https://github.com/BaseW/clean-architecture-playground/actions/workflows/ci.yml)
+
 クリーンアーキテクチャーに法って TODO アプリを作成したい
 
 ## セットアップ
