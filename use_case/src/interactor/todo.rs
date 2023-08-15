@@ -19,6 +19,7 @@ impl<TR> MutationTodoInteractor<TR> {
 
 #[async_trait]
 impl<TR> MutationUseCase for MutationTodoInteractor<TR>
+// TODO: MutationInteractor に直す
 where
     TR: TodoRepository,
 {

@@ -15,3 +15,9 @@
 $ sqlx database create
 $ sqlx migrate run
 ```
+
+### git hooks
+
+```bash
+$ git config --local core.hooksPath .githooks
+```
