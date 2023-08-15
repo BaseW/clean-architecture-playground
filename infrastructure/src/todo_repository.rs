@@ -80,7 +80,7 @@ impl InternalSqliteTodoRepository {
         .await;
         match todo {
             Ok(_) => Ok(()),
-            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+            Err(e) => Err(DomainError::Infrastructure(e.into())),
         }
     }
 
@@ -97,7 +97,7 @@ impl InternalSqliteTodoRepository {
         .await;
         match todos {
             Ok(todos) => Ok(todos),
-            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+            Err(e) => Err(DomainError::Infrastructure(e.into())),
         }
     }
 
@@ -118,7 +118,7 @@ impl InternalSqliteTodoRepository {
         .await;
         match todo {
             Ok(todo) => Ok(todo),
-            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+            Err(e) => Err(DomainError::Infrastructure(e.into())),
         }
     }
 
@@ -136,7 +136,7 @@ impl InternalSqliteTodoRepository {
         .await;
         match todo {
             Ok(_) => Ok(()),
-            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+            Err(e) => Err(DomainError::Infrastructure(e.into())),
         }
     }
 
@@ -152,7 +152,7 @@ impl InternalSqliteTodoRepository {
         .await;
         match todo {
             Ok(_) => Ok(()),
-            Err(e) => return Err(DomainError::Infrastructure(e.into())),
+            Err(e) => Err(DomainError::Infrastructure(e.into())),
         }
     }
 }

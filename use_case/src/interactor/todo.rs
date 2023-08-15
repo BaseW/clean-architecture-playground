@@ -145,7 +145,7 @@ mod tests {
             let mut todos = original_todos.lock().unwrap();
             let mut new_todos = Vec::new();
             for todo in todos.iter() {
-                if todo.id == todo.id {
+                if todo.id == new_todo.id {
                     new_todos.push(Todo {
                         id: todo.id,
                         title: new_todo.title.clone(),
@@ -191,7 +191,7 @@ mod tests {
                 assert_eq!(todos[1].title, Some("task2".to_string()));
             }
             Err(_) => {
-                assert!(false)
+                panic!()
             }
         }
     }
@@ -210,7 +210,7 @@ mod tests {
                 assert_eq!(todos.len(), 0);
             }
             Err(_) => {
-                assert!(false)
+                panic!()
             }
         }
     }
@@ -226,7 +226,7 @@ mod tests {
                 assert_eq!(todos[0].id, 1);
                 assert_eq!(todos[0].title, Some("task1".to_string()));
             }
-            Err(_) => assert!(false),
+            Err(_) => panic!(),
         }
     }
 }
