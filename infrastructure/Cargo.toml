@@ -9,4 +9,7 @@ edition = "2021"
 anyhow = "1.0.72"
 async-trait = "0.1.72"
 domain = { version = "0.1.0", path = "../domain" }
-sqlx = { version = "0.7.1", features = ["sqlite"] }
+sqlx = { version = "0.7.1", features = ["sqlite", "runtime-tokio"] }
+
+[dev-dependencies]
+tokio = { version = "1.31.0", features = ["full"] }
