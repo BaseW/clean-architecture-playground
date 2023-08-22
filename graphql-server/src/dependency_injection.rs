@@ -1,6 +1,6 @@
 use async_graphql::{EmptySubscription, Schema};
 use infrastructure::todo_repository::SqliteTodoRepository;
-use presentation::graphql::{build_schema, Mutation, Query};
+use presentation::graphql::schema::{build_schema, Mutation, Query};
 use sqlx::{Pool, Sqlite};
 use use_case::interactor::todo::{MutationInteractor, QueryInteractor};
 

@@ -3,7 +3,7 @@ use axum::{
     Extension, Router,
 };
 use graphql_server::dependency_injection::{dependency_injection, MI, QI};
-use presentation::handler::{graphql_handler, graphql_playground_handler};
+use presentation::graphql::handler::{graphql_handler, graphql_playground_handler};
 use sqlx::{Pool, Sqlite};
 use std::{env, net::SocketAddr};
 use tower::ServiceBuilder;
