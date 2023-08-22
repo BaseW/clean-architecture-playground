@@ -898,6 +898,7 @@ dependencies = [
  "async-trait",
  "domain",
  "sqlx",
+ "tokio",
 ]
 
 [[package]]
