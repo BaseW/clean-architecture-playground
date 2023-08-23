@@ -4,7 +4,7 @@ use axum::{
 };
 use presentation::{
     graphql::handler::{graphql_handler, graphql_playground_handler},
-    rest::handler::get_todos,
+    rest::handler::{get_todo, get_todos},
 };
 use server::dependency_injection::{dependency_injection, MI, QI};
 use sqlx::{Pool, Sqlite};
@@ -30,6 +30,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .route("/graphiql", get(graphql_playground_handler))
         .route("/graphql", post(graphql_handler::<QI, MI>))
         .route("/todos", get(get_todos::<QI>))
+        .route("/todos/:id", get(get_todo::<QI>))
         .layer(
             ServiceBuilder::new()
                 .layer(Extension(query_use_case.clone()))

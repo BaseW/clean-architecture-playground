@@ -1,8 +1,8 @@
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-
 use use_case::error::UseCaseError;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PresentationalError {
     NotFound,
     InternalServerError,
