@@ -2,8 +2,11 @@ use axum::{
     routing::{get, post},
     Extension, Router,
 };
-use graphql_server::dependency_injection::{dependency_injection, MI, QI};
-use presentation::graphql::handler::{graphql_handler, graphql_playground_handler};
+use presentation::{
+    graphql::handler::{graphql_handler, graphql_playground_handler},
+    rest::handler::get_todos,
+};
+use server::dependency_injection::{dependency_injection, MI, QI};
 use sqlx::{Pool, Sqlite};
 use std::{env, net::SocketAddr};
 use tower::ServiceBuilder;
@@ -26,11 +29,13 @@ async fn main() -> Result<(), anyhow::Error> {
     let app = Router::new()
         .route("/graphiql", get(graphql_playground_handler))
         .route("/graphql", post(graphql_handler::<QI, MI>))
+        .route("/todos", get(get_todos::<QI>))
         .layer(
             ServiceBuilder::new()
-                .layer(Extension(query_use_case))
+                .layer(Extension(query_use_case.clone()))
                 .layer(Extension(schema)),
-        );
+        )
+        .with_state(query_use_case);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], server_port));
     axum::Server::bind(&addr)

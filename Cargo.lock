@@ -686,21 +686,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6c80984affa11d98d1b88b66ac8853f143217b399d3c74116778ff8fdb4ed2e"
 
 [[package]]
-name = "graphql-server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-graphql",
- "axum",
- "infrastructure",
- "presentation",
- "sqlx",
- "tokio",
- "tower",
- "use_case",
-]
-
-[[package]]
 name = "handlebars"
 version = "4.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1497,6 +1482,21 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-graphql",
+ "axum",
+ "infrastructure",
+ "presentation",
+ "sqlx",
+ "tokio",
+ "tower",
+ "use_case",
 ]
 
 [[package]]
