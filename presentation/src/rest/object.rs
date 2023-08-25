@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use use_case::dto::todo::TodoDto;
+use use_case::dto::todo::{CreateTodoDto, TodoDto};
 
 use crate::error::PresentationalError;
 
@@ -26,6 +26,37 @@ pub struct TodosResponse {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TodoResponse {
+    pub todo: Option<Todo>,
+    pub error: Option<PresentationalError>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateTodoPayload {
+    pub title: String,
+}
+
+impl From<CreateTodoPayload> for CreateTodoDto {
+    fn from(create_todo_payload: CreateTodoPayload) -> Self {
+        Self {
+            title: create_todo_payload.title,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateTodoResponse {
+    pub todo: Option<Todo>,
+    pub error: Option<PresentationalError>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateTodoResponse {
+    pub todo: Option<Todo>,
+    pub error: Option<PresentationalError>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeleteTodoResponse {
     pub todo: Option<Todo>,
     pub error: Option<PresentationalError>,
 }

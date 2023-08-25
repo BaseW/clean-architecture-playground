@@ -1,17 +1,12 @@
-use axum::{
-    extract::{Path, State},
-    http::StatusCode,
-    response::IntoResponse,
-    Json,
-};
-use use_case::{error::UseCaseError, traits::todo::QueryUseCase};
+use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
+use use_case::{error::UseCaseError, traits::todo::TodoUseCase};
 
 use crate::error::PresentationalError;
 
-use super::object::{Todo, TodoResponse, TodosResponse};
+use super::object::{CreateTodoPayload, CreateTodoResponse, Todo, TodoResponse, TodosResponse};
 
-pub async fn get_todos<QU: QueryUseCase>(State(qu): State<QU>) -> impl IntoResponse {
-    let todos = qu.find_all().await;
+pub async fn get_todos<TU: TodoUseCase>(Extension(tu): Extension<TU>) -> impl IntoResponse {
+    let todos = tu.find_all().await;
     if let Err(err) = todos {
         let res = match err {
             UseCaseError::NotFound {
@@ -56,11 +51,11 @@ pub async fn get_todos<QU: QueryUseCase>(State(qu): State<QU>) -> impl IntoRespo
     )
 }
 
-pub async fn get_todo<QU: QueryUseCase>(
+pub async fn get_todo<TU: TodoUseCase>(
+    Extension(tu): Extension<TU>,
     Path(id): Path<i64>,
-    State(qu): State<QU>,
 ) -> impl IntoResponse {
-    let todo = qu.find_by_id(id).await;
+    let todo = tu.find_by_id(id).await;
     if let Err(err) = todo {
         let res = match err {
             UseCaseError::NotFound {
@@ -106,6 +101,39 @@ pub async fn get_todo<QU: QueryUseCase>(
     (
         StatusCode::INTERNAL_SERVER_ERROR,
         Json(TodoResponse {
+            todo: None,
+            error: Some(PresentationalError::InternalServerError),
+        }),
+    )
+}
+
+pub async fn create_todo<TU: TodoUseCase>(
+    Extension(tu): Extension<TU>,
+    Json(payload): Json<CreateTodoPayload>,
+) -> impl IntoResponse {
+    let todo = tu.create(payload.into()).await;
+    if todo.is_err() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(CreateTodoResponse {
+                todo: None,
+                error: Some(PresentationalError::InternalServerError),
+            }),
+        );
+    }
+    if let Ok(todo) = todo {
+        let todo: Todo = todo.into();
+        return (
+            StatusCode::OK,
+            Json(CreateTodoResponse {
+                todo: Some(todo),
+                error: None,
+            }),
+        );
+    }
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        Json(CreateTodoResponse {
             todo: None,
             error: Some(PresentationalError::InternalServerError),
         }),
