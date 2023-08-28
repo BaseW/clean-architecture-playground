@@ -44,6 +44,21 @@ impl From<CreateTodoPayload> for CreateTodoDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateTodoPayload {
+    pub id: i64,
+    pub title: String,
+}
+
+impl From<UpdateTodoPayload> for TodoDto {
+    fn from(update_todo_payload: UpdateTodoPayload) -> Self {
+        Self {
+            id: update_todo_payload.id,
+            title: Some(update_todo_payload.title),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateTodoResponse {
     pub todo: Option<Todo>,
     pub error: Option<PresentationalError>,

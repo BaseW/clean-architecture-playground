@@ -3,7 +3,10 @@ use use_case::{error::UseCaseError, traits::todo::TodoUseCase};
 
 use crate::error::PresentationalError;
 
-use super::object::{CreateTodoPayload, CreateTodoResponse, Todo, TodoResponse, TodosResponse};
+use super::object::{
+    CreateTodoPayload, CreateTodoResponse, Todo, TodoResponse, TodosResponse, UpdateTodoPayload,
+    UpdateTodoResponse,
+};
 
 pub async fn get_todos<TU: TodoUseCase>(Extension(tu): Extension<TU>) -> impl IntoResponse {
     let todos = tu.find_all().await;
@@ -134,6 +137,39 @@ pub async fn create_todo<TU: TodoUseCase>(
     (
         StatusCode::INTERNAL_SERVER_ERROR,
         Json(CreateTodoResponse {
+            todo: None,
+            error: Some(PresentationalError::InternalServerError),
+        }),
+    )
+}
+
+pub async fn update_todo<TU: TodoUseCase>(
+    Extension(tu): Extension<TU>,
+    Json(payload): Json<UpdateTodoPayload>,
+) -> impl IntoResponse {
+    let todo = tu.update(payload.into()).await;
+    if todo.is_err() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(UpdateTodoResponse {
+                todo: None,
+                error: Some(PresentationalError::InternalServerError),
+            }),
+        );
+    }
+    if let Ok(todo) = todo {
+        let todo: Todo = todo.into();
+        return (
+            StatusCode::OK,
+            Json(UpdateTodoResponse {
+                todo: Some(todo),
+                error: None,
+            }),
+        );
+    }
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        Json(UpdateTodoResponse {
             todo: None,
             error: Some(PresentationalError::InternalServerError),
         }),
