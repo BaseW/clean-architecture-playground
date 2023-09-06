@@ -4,9 +4,10 @@ use domain::{entity::todo::Todo, repository::todo_repository::TodoRepository};
 use crate::{
     dto::todo::{CreateTodoDto, TodoDto},
     error::UseCaseError,
-    traits::todo::{MutationUseCase, QueryUseCase},
+    traits::todo::{MutationUseCase, QueryUseCase, TodoUseCase},
 };
 
+#[derive(Debug, Clone)]
 pub struct MutationInteractor<TR> {
     todo_repository: TR,
 }
@@ -56,6 +57,62 @@ impl<TR> QueryUseCase for QueryInteractor<TR>
 where
     TR: TodoRepository,
 {
+    async fn find_all(&self) -> Result<Vec<TodoDto>, UseCaseError> {
+        let result = self.todo_repository.find_all().await;
+        match result {
+            Ok(todos) => {
+                let todo_dtos = todos.into_iter().map(|todo| todo.into()).collect();
+                Ok(todo_dtos)
+            }
+            Err(e) => Err(UseCaseError::from(e)),
+        }
+    }
+
+    async fn find_by_id(&self, todo_id: i64) -> Result<Option<TodoDto>, UseCaseError> {
+        let result = self.todo_repository.find_by_id(todo_id).await;
+        match result {
+            Ok(todo) => match todo {
+                Some(todo) => Ok(Some(todo.into())),
+                None => Ok(None),
+            },
+            Err(e) => Err(UseCaseError::from(e)),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TodoInteractor<TR> {
+    todo_repository: TR,
+}
+
+impl<TR> TodoInteractor<TR> {
+    pub fn new(todo_repository: TR) -> Self {
+        Self { todo_repository }
+    }
+}
+
+#[async_trait]
+impl<TR> TodoUseCase for TodoInteractor<TR>
+where
+    TR: TodoRepository,
+{
+    async fn create(&self, todo_data: CreateTodoDto) -> Result<TodoDto, UseCaseError> {
+        let todo = Todo::try_from(todo_data)?;
+        self.todo_repository.create(&todo).await?;
+        Ok(todo.into())
+    }
+
+    async fn update(&self, todo_data: TodoDto) -> Result<TodoDto, UseCaseError> {
+        let todo = Todo::try_from(todo_data)?;
+        self.todo_repository.update(&todo).await?;
+        Ok(todo.into())
+    }
+
+    async fn delete(&self, todo_id: i64) -> Result<i64, UseCaseError> {
+        self.todo_repository.delete(todo_id).await?;
+        Ok(todo_id)
+    }
+
     async fn find_all(&self) -> Result<Vec<TodoDto>, UseCaseError> {
         let result = self.todo_repository.find_all().await;
         match result {

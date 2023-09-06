@@ -8,7 +8,7 @@ use axum::{
     Extension,
 };
 
-use crate::graphql::{Mutation, Query};
+use super::schema::{Mutation, Query};
 use use_case::traits::todo::{MutationUseCase, QueryUseCase};
 
 pub async fn graphql_handler<QUC, MUC>(

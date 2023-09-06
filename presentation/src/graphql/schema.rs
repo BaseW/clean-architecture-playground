@@ -1,4 +1,4 @@
-use crate::{error::PresentationalError, object::Todo};
+use crate::{error::PresentationalError, graphql::object::Todo};
 use async_graphql::{Context, EmptySubscription, Object, Schema};
 use use_case::{
     dto::todo::{CreateTodoDto, TodoDto},
