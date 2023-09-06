@@ -4,8 +4,8 @@ use use_case::{error::UseCaseError, traits::todo::TodoUseCase};
 use crate::error::PresentationalError;
 
 use super::object::{
-    CreateTodoPayload, CreateTodoResponse, Todo, TodoResponse, TodosResponse, UpdateTodoPayload,
-    UpdateTodoResponse,
+    CreateTodoPayload, CreateTodoResponse, DeleteTodoPayload, DeleteTodoResponse, Todo,
+    TodoResponse, TodosResponse, UpdateTodoPayload, UpdateTodoResponse,
 };
 
 pub async fn get_todos<TU: TodoUseCase>(Extension(tu): Extension<TU>) -> impl IntoResponse {
@@ -170,6 +170,59 @@ pub async fn update_todo<TU: TodoUseCase>(
     (
         StatusCode::INTERNAL_SERVER_ERROR,
         Json(UpdateTodoResponse {
+            todo: None,
+            error: Some(PresentationalError::InternalServerError),
+        }),
+    )
+}
+
+pub async fn delete_todo<TU: TodoUseCase>(
+    Extension(tu): Extension<TU>,
+    Json(payload): Json<DeleteTodoPayload>,
+) -> impl IntoResponse {
+    let todo_id = payload.id;
+
+    // check if todo exists
+    let find_todo_result = tu.find_by_id(todo_id).await;
+    let todo = match find_todo_result {
+        Ok(todo) => todo,
+        Err(_) => None,
+    };
+
+    if todo.is_none() {
+        return (
+            StatusCode::NOT_FOUND,
+            Json(DeleteTodoResponse {
+                todo: None,
+                error: Some(PresentationalError::NotFound),
+            }),
+        );
+    }
+    let todo = todo.unwrap();
+
+    let delete_todo_result = tu.delete(payload.id).await;
+    if delete_todo_result.is_err() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(DeleteTodoResponse {
+                todo: None,
+                error: Some(PresentationalError::InternalServerError),
+            }),
+        );
+    }
+    if delete_todo_result.is_ok() {
+        let todo: Todo = todo.into();
+        return (
+            StatusCode::OK,
+            Json(DeleteTodoResponse {
+                todo: Some(todo),
+                error: None,
+            }),
+        );
+    }
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        Json(DeleteTodoResponse {
             todo: None,
             error: Some(PresentationalError::InternalServerError),
         }),

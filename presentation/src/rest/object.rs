@@ -59,6 +59,11 @@ impl From<UpdateTodoPayload> for TodoDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeleteTodoPayload {
+    pub id: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateTodoResponse {
     pub todo: Option<Todo>,
     pub error: Option<PresentationalError>,

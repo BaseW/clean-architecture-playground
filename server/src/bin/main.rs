@@ -4,7 +4,7 @@ use axum::{
 };
 use presentation::{
     graphql::handler::{graphql_handler, graphql_playground_handler},
-    rest::handler::{create_todo, get_todo, get_todos, update_todo},
+    rest::handler::{create_todo, delete_todo, get_todo, get_todos, update_todo},
 };
 use server::dependency_injection::{dependency_injection, MI, QI, UI};
 use sqlx::{Pool, Sqlite};
@@ -33,7 +33,8 @@ async fn main() -> Result<(), anyhow::Error> {
             "/todos",
             get(get_todos::<UI>)
                 .post(create_todo::<UI>)
-                .put(update_todo::<UI>),
+                .put(update_todo::<UI>)
+                .delete(delete_todo::<UI>),
         )
         .route("/todos/:id", get(get_todo::<UI>))
         .layer(
