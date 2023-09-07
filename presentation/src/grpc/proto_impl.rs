@@ -2,13 +2,15 @@ use todo::todo_service_server::TodoService;
 use todo::{GetTodosRequest, GetTodosResponse, Todo};
 use use_case::traits::todo::TodoUseCase;
 
+pub use todo::todo_service_server::TodoServiceServer;
+
 pub mod todo {
     tonic::include_proto!("todo");
 }
 
 #[derive(Default)]
 pub struct TodoServiceImpl<TU: TodoUseCase> {
-    tu: TU,
+    pub tu: TU,
 }
 
 #[tonic::async_trait]

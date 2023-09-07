@@ -1413,7 +1413,7 @@ dependencies = [
  "petgraph",
  "prettyplease",
  "prost 0.11.9",
- "prost-types",
+ "prost-types 0.11.9",
  "regex",
  "syn 1.0.109",
  "tempfile",
@@ -1453,6 +1453,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "213622a1460818959ac1181aaeb2dc9c7f63df720db7d788b3e24eacd1983e13"
 dependencies = [
  "prost 0.11.9",
+]
+
+[[package]]
+name = "prost-types"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cebe0a918c97f86c217b0f76fd754e966f8b9f41595095cf7d74cb4e59d730f6"
+dependencies = [
+ "prost 0.12.0",
 ]
 
 [[package]]
@@ -1655,6 +1664,8 @@ dependencies = [
  "presentation",
  "sqlx",
  "tokio",
+ "tonic",
+ "tonic-reflection",
  "tower",
  "use_case",
 ]
@@ -2224,6 +2235,19 @@ dependencies = [
  "prost-build",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "tonic-reflection"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16e61add39c1426d5f21eae2cc196e97e1f5a5ea7bcf491df3885797992a86eb"
+dependencies = [
+ "prost 0.12.0",
+ "prost-types 0.12.0",
+ "tokio",
+ "tokio-stream",
+ "tonic",
 ]
 
 [[package]]
