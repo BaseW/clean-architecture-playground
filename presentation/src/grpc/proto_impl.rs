@@ -1,7 +1,8 @@
 use todo::todo_service_server::TodoService;
 use todo::{
-    CreateTodoRequest, CreateTodoResponse, FindTodoByIdRequest, FindTodoByIdResponse,
-    GetTodosRequest, GetTodosResponse, Todo, UpdateTodoRequest, UpdateTodoResponse,
+    CreateTodoRequest, CreateTodoResponse, DeleteTodoRequest, DeleteTodoResponse,
+    FindTodoByIdRequest, FindTodoByIdResponse, GetTodosRequest, GetTodosResponse, Todo,
+    UpdateTodoRequest, UpdateTodoResponse,
 };
 use use_case::{
     dto::todo::{CreateTodoDto, TodoDto},
@@ -114,6 +115,39 @@ impl<TU: TodoUseCase> TodoService for TodoServiceImpl<TU> {
                     title: todo.title.unwrap_or("".to_string()),
                 };
                 let response = UpdateTodoResponse { todo: Some(todo) };
+                return Ok(tonic::Response::new(response));
+            }
+            Err(_) => {
+                return Err(tonic::Status::internal("Internal Server Error".to_string()));
+            }
+        }
+    }
+
+    async fn delete_todo(
+        &self,
+        request: tonic::Request<DeleteTodoRequest>,
+    ) -> Result<tonic::Response<DeleteTodoResponse>, tonic::Status> {
+        let id = request.get_ref().id;
+        let find_todo_result = self.tu.find_by_id(id).await;
+
+        let todo = match find_todo_result {
+            Ok(todo) => todo,
+            Err(_) => None,
+        };
+
+        if todo.is_none() {
+            return Err(tonic::Status::internal("Not Found".to_string()));
+        }
+        let todo = todo.unwrap();
+
+        let todo_id = self.tu.delete(id).await;
+        match todo_id {
+            Ok(_) => {
+                let todo = Todo {
+                    id: todo.id,
+                    title: todo.title.unwrap_or("".to_string()),
+                };
+                let response = DeleteTodoResponse { todo: Some(todo) };
                 return Ok(tonic::Response::new(response));
             }
             Err(_) => {
