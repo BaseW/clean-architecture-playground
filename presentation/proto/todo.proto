@@ -1,0 +1,56 @@
+syntax = "proto3";
+package todo;
+
+// The todo service definition.
+service TodoService {
+  rpc CreateTodo (CreateTodoRequest) returns (CreateTodoResponse) {}
+  rpc GetTodos (GetTodosRequest) returns (GetTodosResponse) {}
+  rpc FindTodoById (FindTodoByIdRequest) returns (FindTodoByIdResponse) {}
+  rpc UpdateTodo (UpdateTodoRequest) returns (UpdateTodoResponse) {}
+  rpc DeleteTodo (DeleteTodoRequest) returns (DeleteTodoResponse) {}
+}
+
+message Todo {
+  int64 id = 1;
+  string title = 2;
+}
+
+message CreateTodoRequest {
+  string title = 1;
+}
+
+message CreateTodoResponse {
+  Todo todo = 1;
+}
+
+message GetTodosRequest {}
+
+message GetTodosResponse {
+  repeated Todo todos = 1;
+}
+
+message FindTodoByIdRequest {
+  int64 id = 1;
+}
+
+message FindTodoByIdResponse {
+  Todo todo = 1;
+}
+
+message UpdateTodoRequest {
+  int64 id = 1;
+  string title = 2;
+  bool completed = 3;
+}
+
+message UpdateTodoResponse {
+  Todo todo = 1;
+}
+
+message DeleteTodoRequest {
+  int64 id = 1;
+}
+
+message DeleteTodoResponse {
+  Todo todo = 1;
+}

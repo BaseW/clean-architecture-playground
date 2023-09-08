@@ -4,6 +4,7 @@ use axum::{
 };
 use presentation::{
     graphql::handler::{graphql_handler, graphql_playground_handler},
+    grpc::proto_impl::{todo, TodoServiceImpl, TodoServiceServer},
     rest::handler::{create_todo, delete_todo, get_todo, get_todos, update_todo},
 };
 use server::dependency_injection::{dependency_injection, MI, QI, UI};
@@ -44,11 +45,36 @@ async fn main() -> Result<(), anyhow::Error> {
                 .layer(Extension(use_case.clone())),
         );
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], server_port));
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
+    let reflection_service = tonic_reflection::server::Builder::configure()
+        .register_encoded_file_descriptor_set(todo::FILE_DESCRIPTOR_SET)
+        .build()
         .unwrap();
+
+    let addr = SocketAddr::from(([0, 0, 0, 0], server_port));
+    let grpc_addr = SocketAddr::from(([0, 0, 0, 0], server_port + 1));
+    let handle = tokio::spawn(async move {
+        println!("Listening on http://{}", addr);
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .await
+            .expect("Server failed to start.");
+    });
+    let grpc_handle = tokio::spawn(async move {
+        println!("Listening on http://{}", grpc_addr);
+        tonic::transport::Server::builder()
+            .add_service(reflection_service)
+            .add_service(TodoServiceServer::<TodoServiceImpl<UI>>::new(
+                TodoServiceImpl::<UI> {
+                    tu: use_case.clone(),
+                },
+            ))
+            .serve(grpc_addr)
+            .await
+            .expect("gRPC Server failed to start.");
+    });
+
+    handle.await?;
+    grpc_handle.await?;
 
     Ok(())
 }
