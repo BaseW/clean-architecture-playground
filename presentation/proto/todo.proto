@@ -6,7 +6,7 @@ service TodoService {
   rpc CreateTodo (CreateTodoRequest) returns (CreateTodoResponse) {}
   rpc GetTodos (GetTodosRequest) returns (GetTodosResponse) {}
   rpc FindTodoById (FindTodoByIdRequest) returns (FindTodoByIdResponse) {}
-  // rpc UpdateTodo (UpdateTodoRequest) returns (UpdateTodoResponse) {}
+  rpc UpdateTodo (UpdateTodoRequest) returns (UpdateTodoResponse) {}
   // rpc DeleteTodo (DeleteTodoRequest) returns (DeleteTodoResponse) {}
 }
 
@@ -37,18 +37,18 @@ message FindTodoByIdResponse {
   Todo todo = 1;
 }
 
-// message UpdateTodoRequest {
-//   string id = 1;
-//   string title = 2;
-//   bool completed = 3;
-// }
+message UpdateTodoRequest {
+  int64 id = 1;
+  string title = 2;
+  bool completed = 3;
+}
 
-// message UpdateTodoResponse {
-//   Todo todo = 1;
-// }
+message UpdateTodoResponse {
+  Todo todo = 1;
+}
 
 // message DeleteTodoRequest {
-//   string id = 1;
+//   int64 id = 1;
 // }
 
 // message DeleteTodoResponse {

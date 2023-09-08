@@ -1,9 +1,12 @@
 use todo::todo_service_server::TodoService;
 use todo::{
     CreateTodoRequest, CreateTodoResponse, FindTodoByIdRequest, FindTodoByIdResponse,
-    GetTodosRequest, GetTodosResponse, Todo,
+    GetTodosRequest, GetTodosResponse, Todo, UpdateTodoRequest, UpdateTodoResponse,
 };
-use use_case::{dto::todo::CreateTodoDto, traits::todo::TodoUseCase};
+use use_case::{
+    dto::todo::{CreateTodoDto, TodoDto},
+    traits::todo::TodoUseCase,
+};
 
 pub use todo::todo_service_server::TodoServiceServer;
 
@@ -83,6 +86,34 @@ impl<TU: TodoUseCase> TodoService for TodoServiceImpl<TU> {
                     title: todo.title.unwrap_or("".to_string()),
                 };
                 let response = CreateTodoResponse { todo: Some(todo) };
+                return Ok(tonic::Response::new(response));
+            }
+            Err(_) => {
+                return Err(tonic::Status::internal("Internal Server Error".to_string()));
+            }
+        }
+    }
+
+    async fn update_todo(
+        &self,
+        request: tonic::Request<UpdateTodoRequest>,
+    ) -> Result<tonic::Response<UpdateTodoResponse>, tonic::Status> {
+        let id = request.get_ref().id;
+        let title = request.get_ref().title.to_string();
+        let todo = self
+            .tu
+            .update(TodoDto {
+                id,
+                title: Some(title),
+            })
+            .await;
+        match todo {
+            Ok(todo) => {
+                let todo = Todo {
+                    id: todo.id,
+                    title: todo.title.unwrap_or("".to_string()),
+                };
+                let response = UpdateTodoResponse { todo: Some(todo) };
                 return Ok(tonic::Response::new(response));
             }
             Err(_) => {
