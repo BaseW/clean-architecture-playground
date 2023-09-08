@@ -6,6 +6,8 @@ pub use todo::todo_service_server::TodoServiceServer;
 
 pub mod todo {
     tonic::include_proto!("todo");
+
+    pub const FILE_DESCRIPTOR_SET: &[u8] = tonic::include_file_descriptor_set!("todo_descriptor");
 }
 
 #[derive(Default)]
