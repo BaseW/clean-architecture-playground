@@ -3,7 +3,7 @@ package todo;
 
 // The todo service definition.
 service TodoService {
-  // rpc CreateTodo (CreateTodoRequest) returns (CreateTodoResponse) {}
+  rpc CreateTodo (CreateTodoRequest) returns (CreateTodoResponse) {}
   rpc GetTodos (GetTodosRequest) returns (GetTodosResponse) {}
   rpc FindTodoById (FindTodoByIdRequest) returns (FindTodoByIdResponse) {}
   // rpc UpdateTodo (UpdateTodoRequest) returns (UpdateTodoResponse) {}
@@ -15,13 +15,13 @@ message Todo {
   string title = 2;
 }
 
-// message CreateTodoRequest {
-//   string title = 1;
-// }
+message CreateTodoRequest {
+  string title = 1;
+}
 
-// message CreateTodoResponse {
-//   Todo todo = 1;
-// }
+message CreateTodoResponse {
+  Todo todo = 1;
+}
 
 message GetTodosRequest {}
 

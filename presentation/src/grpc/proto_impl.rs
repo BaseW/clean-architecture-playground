@@ -1,10 +1,11 @@
 use todo::todo_service_server::TodoService;
-use todo::{GetTodosRequest, GetTodosResponse, Todo};
-use use_case::traits::todo::TodoUseCase;
+use todo::{
+    CreateTodoRequest, CreateTodoResponse, FindTodoByIdRequest, FindTodoByIdResponse,
+    GetTodosRequest, GetTodosResponse, Todo,
+};
+use use_case::{dto::todo::CreateTodoDto, traits::todo::TodoUseCase};
 
 pub use todo::todo_service_server::TodoServiceServer;
-
-use self::todo::{FindTodoByIdRequest, FindTodoByIdResponse};
 
 pub mod todo {
     tonic::include_proto!("todo");
@@ -63,6 +64,27 @@ impl<TU: TodoUseCase> TodoService for TodoServiceImpl<TU> {
                     return Ok(tonic::Response::new(response));
                 }
             },
+            Err(_) => {
+                return Err(tonic::Status::internal("Internal Server Error".to_string()));
+            }
+        }
+    }
+
+    async fn create_todo(
+        &self,
+        request: tonic::Request<CreateTodoRequest>,
+    ) -> Result<tonic::Response<CreateTodoResponse>, tonic::Status> {
+        let title = request.into_inner().title;
+        let todo = self.tu.create(CreateTodoDto { title }).await;
+        match todo {
+            Ok(todo) => {
+                let todo = Todo {
+                    id: todo.id,
+                    title: todo.title.unwrap_or("".to_string()),
+                };
+                let response = CreateTodoResponse { todo: Some(todo) };
+                return Ok(tonic::Response::new(response));
+            }
             Err(_) => {
                 return Err(tonic::Status::internal("Internal Server Error".to_string()));
             }
