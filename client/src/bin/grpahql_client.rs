@@ -1,11 +1,14 @@
-use client::rest::{create_todo, delete_todo, find_todo, get_todos, update_todo};
+use client::graphql::{
+    mutation::{create_todo, delete_todo, update_todo},
+    query::{find_todo, get_todos},
+};
 
 #[tokio::main]
 async fn main() {
     // parse args
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        println!("Usage: client <command>");
+        println!("Usage: graphql_client <command>");
         return;
     }
 
@@ -13,7 +16,7 @@ async fn main() {
     let command = &args[1];
     match command.as_str() {
         "help" => {
-            println!("Usage: client <command>");
+            println!("Usage: graphql_client <command>");
             println!("Commands:");
             println!("  get_todos");
             println!("  find_todo <id>");
@@ -26,7 +29,7 @@ async fn main() {
         }
         "find_todo" => {
             if args.len() < 3 {
-                println!("Usage: client find_todo <id>");
+                println!("Usage: graphql_client find_todo <id>");
                 return;
             }
             let id = args[2].parse::<i64>().unwrap();
@@ -34,7 +37,7 @@ async fn main() {
         }
         "create_todo" => {
             if args.len() < 3 {
-                println!("Usage: client create_todo <title>");
+                println!("Usage: graphql_client create_todo <title>");
                 return;
             }
             let title = args[2].clone();
@@ -42,7 +45,7 @@ async fn main() {
         }
         "update_todo" => {
             if args.len() < 4 {
-                println!("Usage: client update_todo <id> <title>");
+                println!("Usage: graphql_client update_todo <id> <title>");
                 return;
             }
             let id = args[2].parse::<i64>().unwrap();
@@ -51,14 +54,14 @@ async fn main() {
         }
         "delete_todo" => {
             if args.len() < 3 {
-                println!("Usage: client delete_todo <id>");
+                println!("Usage: graphql_client delete_todo <id>");
                 return;
             }
             let id = args[2].parse::<i64>().unwrap();
             delete_todo(id).await.unwrap();
         }
         _ => {
-            println!("Usage: client <command>");
+            println!("Usage: graphql_client <command>");
         }
     }
 }
