@@ -1,5 +1,12 @@
 [workspace]
-members = ["domain", "use_case", "infrastructure", "presentation", "server"]
+members = [
+  "domain",
+  "use_case",
+  "infrastructure",
+  "presentation",
+  "server",
+  "client",
+]
 # Only check / build main crates by default (check all with `--workspace`)
 default-members = [
   "domain",
@@ -7,6 +14,7 @@ default-members = [
   "infrastructure",
   "presentation",
   "server",
+  "client",
 ]
 # Example has been deleted, but README.md remains
 exclude = []
