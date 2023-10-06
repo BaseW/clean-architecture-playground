@@ -1,5 +1,5 @@
 use todo::todo_service_server::TodoService;
-use todo::{
+pub use todo::{
     CreateTodoRequest, CreateTodoResponse, DeleteTodoRequest, DeleteTodoResponse,
     FindTodoByIdRequest, FindTodoByIdResponse, GetTodosRequest, GetTodosResponse, Todo,
     UpdateTodoRequest, UpdateTodoResponse,
@@ -9,6 +9,7 @@ use use_case::{
     traits::todo::TodoUseCase,
 };
 
+pub use todo::todo_service_client::TodoServiceClient;
 pub use todo::todo_service_server::TodoServiceServer;
 
 pub mod todo {

@@ -40,7 +40,6 @@ message FindTodoByIdResponse {
 message UpdateTodoRequest {
   int64 id = 1;
   string title = 2;
-  bool completed = 3;
 }
 
 message UpdateTodoResponse {
