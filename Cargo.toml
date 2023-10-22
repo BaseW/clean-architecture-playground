@@ -6,6 +6,7 @@ members = [
   "presentation",
   "server",
   "client",
+  "gui-client/src-tauri",
 ]
 # Only check / build main crates by default (check all with `--workspace`)
 default-members = [
