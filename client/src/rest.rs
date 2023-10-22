@@ -1,12 +1,21 @@
+use presentation::rest::object::TodosResponse;
 use reqwest::Client;
 
-pub async fn get_todos() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn get_todos() -> Result<TodosResponse, Box<dyn std::error::Error>> {
     let client = Client::new();
     let res = client.get("http://localhost:8080/todos").send().await?;
     println!("Status: {}", res.status());
-    let body = res.text().await?;
-    println!("Body: {}", body);
-    Ok(())
+    let body = res.json::<TodosResponse>().await;
+    match body {
+        Ok(body) => {
+            println!("Body: {:?}", body);
+            Ok(body)
+        }
+        Err(err) => {
+            println!("Error: {:?}", err);
+            Err(Box::new(err))
+        }
+    }
 }
 
 pub async fn find_todo(id: i64) -> Result<(), Box<dyn std::error::Error>> {

@@ -12,6 +12,11 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
 
+  async function onClickGetTodos() {
+    const todos = await invoke("get_todos");
+    console.log(todos);
+  }
+
   return (
     <div className="container">
       <h1>Welcome to Tauri!</h1>
@@ -44,6 +49,12 @@ function App() {
         />
         <button type="submit">Greet</button>
       </form>
+
+      <div>
+        <button onClick={onClickGetTodos}>
+          get_todos
+        </button>
+      </div>
 
       <p>{greetMsg}</p>
     </div>
